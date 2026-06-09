@@ -45,7 +45,7 @@ Output: a 20-second, 30fps H.264 MP4 (~3 MB).
 
 ## Watch the animation
 
-▶️ [YouTube — Modus Operandi: Aerial Assault & Underground Siege](#) *https://www.youtube.com/watch?v=W-Cg4ziAWfU*
+▶️ [YouTube — Modus Operandi: Aerial Assault & Underground Siege](#) *(https://www.youtube.com/watch?v=W-Cg4ziAWfU)*
 
 ---
 
