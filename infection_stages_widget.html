@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Modus Operandi: Click & Learn — Primary vs. Secondary Infection</title>
+<style>
+  :root{
+    --paper:#f4ecd8;
+    --ink:#3b2f23;
+    --accent:#8a3324;
+    --primary-color:#2f6f4f;
+    --secondary-color:#6b4226;
+    --card-bg:#fffaf0;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:Georgia, 'Times New Roman', serif;
+    background:var(--paper);
+    color:var(--ink);
+    padding:24px 16px 60px;
+  }
+  h1{
+    text-align:center;
+    font-size:1.8rem;
+    letter-spacing:1px;
+    border-bottom:3px double var(--ink);
+    padding-bottom:10px;
+    margin-bottom:6px;
+  }
+  .subtitle{
+    text-align:center;
+    font-style:italic;
+    margin-bottom:24px;
+    color:#6b5d4a;
+  }
+  .legend{
+    display:flex;
+    justify-content:center;
+    gap:24px;
+    flex-wrap:wrap;
+    margin-bottom:28px;
+    font-size:0.95rem;
+  }
+  .legend span{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+  }
+  .swatch{
+    width:16px;height:16px;border-radius:3px;display:inline-block;border:1px solid var(--ink);
+  }
+  .swatch.primary{background:var(--primary-color);}
+  .swatch.secondary{background:var(--secondary-color);}
+
+  .stage{
+    position:relative;
+    max-width:900px;
+    margin:0 auto;
+    background:#e9e0c9;
+    border:3px solid var(--ink);
+    border-radius:8px;
+    height:480px;
+    overflow:hidden;
+    box-shadow:6px 6px 0 rgba(0,0,0,0.15);
+  }
+  .sky{
+    position:absolute;
+    top:0;left:0;right:0;
+    height:55%;
+    background:linear-gradient(180deg,#cfe3d6 0%, #e9e0c9 100%);
+  }
+  .ground{
+    position:absolute;
+    bottom:0;left:0;right:0;
+    height:45%;
+    background:linear-gradient(180deg,#a9886a 0%, #6b4f38 100%);
+  }
+  .ground-line{
+    position:absolute;
+    top:55%;left:0;right:0;
+    height:2px;
+    background:var(--ink);
+  }
+
+  /* characters as clickable buttons styled to look like scene elements */
+  .char{
+    position:absolute;
+    background:none;
+    border:none;
+    cursor:pointer;
+    padding:0;
+    transition:transform .15s ease, filter .15s ease;
+    font-size:0;
+  }
+  .char:hover, .char:focus-visible{
+    transform:scale(1.12);
+    filter:drop-shadow(0 0 6px rgba(0,0,0,0.35));
+    outline:none;
+  }
+  .char svg{display:block;}
+
+  .label{
+    position:absolute;
+    font-size:0.75rem;
+    color:var(--ink);
+    background:rgba(244,236,216,0.85);
+    padding:2px 6px;
+    border-radius:4px;
+    border:1px solid var(--ink);
+    pointer-events:none;
+    white-space:nowrap;
+  }
+
+  .hint{
+    text-align:center;
+    margin-top:14px;
+    font-size:0.9rem;
+    color:#6b5d4a;
+  }
+
+  /* fact card */
+  .overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(59,47,35,0.55);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    z-index:50;
+  }
+  .overlay.show{display:flex;}
+  .card{
+    background:var(--card-bg);
+    border:3px solid var(--ink);
+    border-radius:10px;
+    max-width:480px;
+    width:100%;
+    padding:22px 24px;
+    position:relative;
+    box-shadow:8px 8px 0 rgba(0,0,0,0.25);
+  }
+  .card h2{
+    margin:0 0 4px;
+    font-size:1.3rem;
+  }
+  .card .stage-tag{
+    display:inline-block;
+    font-size:0.75rem;
+    text-transform:uppercase;
+    letter-spacing:1px;
+    padding:3px 10px;
+    border-radius:12px;
+    color:#fff;
+    margin-bottom:10px;
+  }
+  .stage-tag.primary{background:var(--primary-color);}
+  .stage-tag.secondary{background:var(--secondary-color);}
+  .card p{line-height:1.5; margin:0 0 10px;}
+  .card .source{
+    font-size:0.78rem;
+    color:#6b5d4a;
+    border-top:1px solid #d8cdb4;
+    padding-top:8px;
+  }
+  .card .source a{color:var(--accent);}
+  .close-btn{
+    position:absolute;
+    top:10px; right:12px;
+    background:var(--ink);
+    color:var(--paper);
+    border:none;
+    border-radius:50%;
+    width:30px;height:30px;
+    font-size:1.1rem;
+    cursor:pointer;
+    line-height:1;
+  }
+  .close-btn:hover{background:var(--accent);}
+  footer{
+    text-align:center;
+    margin-top:30px;
+    font-size:0.8rem;
+    color:#8a7c66;
+  }
+</style>
+</head>
+<body>
+
+<h1>Modus Operandi: Click &amp; Learn</h1>
+<p class="subtitle">Click a tree, a spore, or an underground fungus to reveal a fact about how <em>Heterobasidion annosum</em> infects conifers.</p>
+
+<div class="legend">
+  <span><i class="swatch primary"></i> Primary infection — airborne spores (above ground)</span>
+  <span><i class="swatch secondary"></i> Secondary infection — mycelium spread (below ground)</span>
+</div>
+
+<div class="stage" id="stage">
+  <div class="sky"></div>
+  <div class="ground"></div>
+  <div class="ground-line"></div>
+
+  <!-- SPORE 1 (primary) -->
+  <button class="char" data-stage="primary" data-fact="0" style="top:8%; left:18%; width:46px; height:46px;" aria-label="Spore drifting in the wind">
+    <svg viewBox="0 0 46 46" width="46" height="46">
+      <circle cx="23" cy="23" r="14" fill="#cf6b4f" stroke="#3b2f23" stroke-width="2"/>
+      <circle cx="18" cy="19" r="2.4" fill="#3b2f23"/>
+      <circle cx="28" cy="19" r="2.4" fill="#3b2f23"/>
+      <path d="M17 28 q6 6 12 0" stroke="#3b2f23" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <path d="M9 23 h-6 M37 23 h6 M23 9 v-6 M23 37 v6" stroke="#3b2f23" stroke-width="1.5"/>
+    </svg>
+  </button>
+
+  <!-- SPORE 2 (primary) -->
+  <button class="char" data-stage="primary" data-fact="1" style="top:18%; left:62%; width:38px; height:38px;" aria-label="A second wind-borne spore">
+    <svg viewBox="0 0 46 46" width="38" height="38">
+      <circle cx="23" cy="23" r="13" fill="#d98f63" stroke="#3b2f23" stroke-width="2"/>
+      <circle cx="18" cy="19" r="2.2" fill="#3b2f23"/>
+      <circle cx="28" cy="19" r="2.2" fill="#3b2f23"/>
+      <path d="M18 29 q5 -4 10 0" stroke="#3b2f23" stroke-width="2" fill="none" stroke-linecap="round"/>
+    </svg>
+  </button>
+
+  <!-- TREE 1 with fresh stump wound (primary entry point) -->
+  <button class="char" data-stage="primary" data-fact="2" style="bottom:8%; left:14%; width:90px; height:170px;" aria-label="Tree with a fresh stump — entry point for spores">
+    <svg viewBox="0 0 90 170" width="90" height="170">
+      <ellipse cx="45" cy="40" rx="38" ry="34" fill="#5f7a52" stroke="#3b2f23" stroke-width="2.5"/>
+      <rect x="38" y="60" width="14" height="60" fill="#7a5a3a" stroke="#3b2f23" stroke-width="2.5"/>
+      <ellipse cx="45" cy="120" rx="22" ry="9" fill="#9a7048" stroke="#3b2f23" stroke-width="2.5"/>
+      <ellipse cx="45" cy="120" rx="11" ry="4.5" fill="#caa874" stroke="#3b2f23" stroke-width="1.5"/>
+      <path d="M33 120 q12 -7 24 0" stroke="#8a3324" stroke-width="2" fill="none" stroke-dasharray="3 2"/>
+    </svg>
+  </button>
+  <div class="label" style="bottom:5%; left:8%;">freshly cut stump</div>
+
+  <!-- TREE 2 healthy, in line for secondary spread -->
+  <button class="char" data-stage="secondary" data-fact="2" style="bottom:8%; left:74%; width:80px; height:160px;" aria-label="Neighbouring healthy tree, vulnerable to underground spread">
+    <svg viewBox="0 0 90 170" width="80" height="160">
+      <ellipse cx="45" cy="40" rx="36" ry="32" fill="#6f8c5e" stroke="#3b2f23" stroke-width="2.5"/>
+      <rect x="38" y="58" width="14" height="64" fill="#7a5a3a" stroke="#3b2f23" stroke-width="2.5"/>
+    </svg>
+  </button>
+  <div class="label" style="bottom:5%; left:71%;">neighbouring healthy tree</div>
+
+  <!-- FUNGUS / mycelium marcher 1 (secondary, underground) -->
+  <button class="char" data-stage="secondary" data-fact="0" style="bottom:6%; left:36%; width:54px; height:54px;" aria-label="Fungal mycelium marching underground toward roots">
+    <svg viewBox="0 0 54 54" width="54" height="54">
+      <ellipse cx="27" cy="34" rx="17" ry="14" fill="#caa874" stroke="#3b2f23" stroke-width="2"/>
+      <circle cx="22" cy="30" r="2" fill="#3b2f23"/>
+      <circle cx="32" cy="30" r="2" fill="#3b2f23"/>
+      <path d="M21 38 q6 5 12 0" stroke="#3b2f23" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+      <path d="M14 44 q13 8 26 0" stroke="#3b2f23" stroke-width="1.6" fill="none"/>
+    </svg>
+  </button>
+
+  <!-- FUNGUS / mycelium marcher 2 (secondary, underground, near root contact) -->
+  <button class="char" data-stage="secondary" data-fact="1" style="bottom:5%; left:55%; width:50px; height:50px;" aria-label="Mycelium reaching a root graft between trees">
+    <svg viewBox="0 0 54 54" width="50" height="50">
+      <ellipse cx="27" cy="34" rx="16" ry="13" fill="#b58c5c" stroke="#3b2f23" stroke-width="2"/>
+      <circle cx="22" cy="30" r="2" fill="#3b2f23"/>
+      <circle cx="32" cy="30" r="2" fill="#3b2f23"/>
+      <path d="M22 39 q5 4 10 0" stroke="#3b2f23" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+    </svg>
+  </button>
+
+  <!-- root graft connecting line (secondary, decorative + clickable) -->
+  <button class="char" data-stage="secondary" data-fact="3" style="bottom:9%; left:44%; width:140px; height:30px;" aria-label="Root graft connecting two trees underground">
+    <svg viewBox="0 0 140 30" width="140" height="30">
+      <path d="M5 24 q65 -28 130 0" stroke="#3b2f23" stroke-width="3" fill="none" stroke-dasharray="6 4"/>
+    </svg>
+  </button>
+  <div class="label" style="bottom:1%; left:46%;">root contact / graft</div>
+</div>
+
+<p class="hint">Tip: every clickable character glows when you hover — there are 7 in total (2 spores, 2 trees, 2 fungi, 1 root graft).</p>
+
+<div class="overlay" id="overlay">
+  <div class="card" id="card">
+    <button class="close-btn" id="closeBtn" aria-label="Close">&times;</button>
+    <span class="stage-tag" id="stageTag"></span>
+    <h2 id="cardTitle"></h2>
+    <p id="cardText"></p>
+    <p class="source" id="cardSource"></p>
+  </div>
+</div>
+
+<footer>
+  Facts verified against peer-reviewed and reference sources on <em>Heterobasidion annosum</em> — see citations inside each fact card.<br>
+  Companion piece to "Modus Operandi: Aerial Assault and Underground Siege."
+</footer>
+
+<script>
+  const facts = {
+    primary: [
+      {
+        title: "Aerial Assault: How It Begins",
+        text: "Primary infection is initiated by airborne fungal spores (basidiospores) landing and germinating on freshly cut conifer stumps, or on stem and root wounds — not on intact bark.",
+        source: 'Asiegbu, F.O., Adomas, A. &amp; Stenlid, J.A.N. (2005). "Conifer root and butt rot caused by <em>Heterobasidion annosum</em> (Fr.) Bref. s.l." <em>Molecular Plant Pathology</em>, 6(4), 395–409. <a href="https://bsppjournals.onlinelibrary.wiley.com/doi/10.1111/j.1364-3703.2005.00295.x" target="_blank" rel="noopener">DOI: 10.1111/j.1364-3703.2005.00295.x</a>'
+      },
+      {
+        title: "Riding the Wind",
+        text: "Spores are released mainly in summer and can be carried long distances by wind currents before they ever find a stump or wound to colonise.",
+        source: '<a href="https://www.sciencedirect.com/topics/immunology-and-microbiology/heterobasidion-annosum" target="_blank" rel="noopener">ScienceDirect Topics — Heterobasidion Annosum overview</a>'
+      },
+      {
+        title: "Why the Fresh Stump Matters",
+        text: "A freshly cut stump (or any wound exposing bare wood/roots) is the classic entry point: spores cannot establish on healthy, uninjured conifer roots — they need that open surface to germinate and take hold.",
+        source: '<a href="https://www.sciencedirect.com/topics/immunology-and-microbiology/heterobasidion-annosum" target="_blank" rel="noopener">ScienceDirect Topics — Heterobasidion Annosum overview</a> and <a href="https://en.wikipedia.org/wiki/Heterobasidion_annosum" target="_blank" rel="noopener">Wikipedia — Heterobasidion annosum</a>'
+      }
+    ],
+    secondary: [
+      {
+        title: "The Underground Siege Begins",
+        text: "Once a stump is colonised, the fungus grows on as mycelium (vegetative fungal threads) and spreads from the stump into the woody root system below ground.",
+        source: 'Asiegbu, F.O., Adomas, A. &amp; Stenlid, J.A.N. (2005). <em>Molecular Plant Pathology</em>, 6(4), 395–409. <a href="https://bsppjournals.onlinelibrary.wiley.com/doi/10.1111/j.1364-3703.2005.00295.x" target="_blank" rel="noopener">DOI: 10.1111/j.1364-3703.2005.00295.x</a>'
+      },
+      {
+        title: "Tree-to-Tree, Without Spores",
+        text: "From an infected root system, the mycelium spreads to neighbouring mature trees and seedlings via root contacts and root grafts — no new spores are needed for this stage.",
+        source: 'Asiegbu, F.O., Adomas, A. &amp; Stenlid, J.A.N. (2005). <em>Molecular Plant Pathology</em>, 6(4), 395–409. <a href="https://bsppjournals.onlinelibrary.wiley.com/doi/10.1111/j.1364-3703.2005.00295.x" target="_blank" rel="noopener">DOI: 10.1111/j.1364-3703.2005.00295.x</a>'
+      },
+      {
+        title: "The One Loophole for Healthy Trees",
+        text: "Unlike spores, the vegetative mycelium CAN infect healthy, uninjured trees — but only by growing directly through a root contact or graft connecting it to an already-infected root system.",
+        source: '<a href="https://www.sciencedirect.com/topics/immunology-and-microbiology/heterobasidion-annosum" target="_blank" rel="noopener">ScienceDirect Topics — Heterobasidion Annosum overview</a>'
+      },
+      {
+        title: "How a Whole Patch Gets Sick",
+        text: "This root-to-root chain reaction is how a single infected stump can seed an expanding patch of disease through a forest stand — explained in the very paper this companion piece is based on.",
+        source: 'Asiegbu, F.O., Adomas, A. &amp; Stenlid, J.A.N. (2005). "Conifer root and butt rot caused by <em>Heterobasidion annosum</em> (Fr.) Bref. s.l." <em>Molecular Plant Pathology</em>, 6(4), 395–409. <a href="https://bsppjournals.onlinelibrary.wiley.com/doi/10.1111/j.1364-3703.2005.00295.x" target="_blank" rel="noopener">DOI: 10.1111/j.1364-3703.2005.00295.x</a>'
+      }
+    ]
+  };
+
+  const overlay = document.getElementById('overlay');
+  const card = document.getElementById('card');
+  const stageTag = document.getElementById('stageTag');
+  const cardTitle = document.getElementById('cardTitle');
+  const cardText = document.getElementById('cardText');
+  const cardSource = document.getElementById('cardSource');
+  const closeBtn = document.getElementById('closeBtn');
+
+  document.querySelectorAll('.char').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const stage = btn.dataset.stage;
+      const idx = parseInt(btn.dataset.fact, 10);
+      const fact = facts[stage][idx];
+      stageTag.textContent = stage === 'primary' ? 'Primary infection' : 'Secondary infection';
+      stageTag.className = 'stage-tag ' + stage;
+      cardTitle.textContent = fact.title;
+      cardText.textContent = fact.text;
+      cardSource.innerHTML = 'Source: ' + fact.source;
+      overlay.classList.add('show');
+      closeBtn.focus();
+    });
+  });
+
+  function closeCard(){ overlay.classList.remove('show'); }
+  closeBtn.addEventListener('click', closeCard);
+  overlay.addEventListener('click', (e) => { if (e.target === overlay) closeCard(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeCard(); });
+</script>
+
+</body>
+</html>
