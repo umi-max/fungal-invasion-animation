@@ -1,6 +1,6 @@
 # Modus Operandi: Aerial Assault & Underground Siege
 
-A science communication project animating the two-stage infection strategy of *Heterobasidion annosum* — one of the most economically damaging fungal pathogens of conifers in the northern hemisphere.
+A science communication project animating the two-stage infection strategy of *Heterobasidion annosum* - one of the most economically damaging fungal pathogens of conifers in the northern hemisphere.
 
 > Based on: Asiegbu, F.O., Adomas, A. & Stenlid, J.A.N. (2005). "Conifer root and butt rot caused by *Heterobasidion annosum* (Fr.) Bref. s.l." *Molecular Plant Pathology*, 6(4), 395–409. https://doi.org/10.1111/j.1364-3703.2005.00295.x
 
@@ -45,7 +45,7 @@ Output: a 20-second, 30fps H.264 MP4 (~3 MB).
 
 ## Watch the animation
 
-▶️ [YouTube — Modus Operandi: Aerial Assault & Underground Siege](#) *(add your YouTube link here)*
+▶️ [YouTube — Modus Operandi: Aerial Assault & Underground Siege](#) *https://www.youtube.com/watch?v=W-Cg4ziAWfU*
 
 ---
 
