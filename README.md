@@ -51,9 +51,9 @@ Output: a 20-second, 30fps H.264 MP4 (~3 MB).
 
 ## Science background
 
-**Primary infection** — initiated by airborne basidiospores landing on freshly cut stumps or wounded bark/roots. Spores travel long distances on wind currents in summer but cannot infect healthy, uninjured roots.
+**Primary infection** - initiated by airborne basidiospores landing on freshly cut stumps or wounded bark/roots. Spores travel long distances on wind currents in summer but cannot infect healthy, uninjured roots.
 
-**Secondary infection** — once established in a stump, mycelium spreads through the root system and colonises neighbouring healthy trees via root contacts and root grafts underground — no new spores required.
+**Secondary infection** - once established in a stump, mycelium spreads through the root system and colonises neighbouring healthy trees via root contacts and root grafts underground - no new spores required.
 
 ---
 
